@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
-const API_URL = "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 function App() {
   const [screen, setScreen] = useState("loading");
@@ -915,6 +915,15 @@ const startEditingMenuItem = (item) => {
 
   setError("");
   setSuccess("");
+
+  setTimeout(() => {
+    document
+      .getElementById("admin-menu-edit-form")
+      ?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+  }, 100);
 };
 
 // =====================================
@@ -1343,7 +1352,7 @@ if (screen === "admin-dashboard") {
   📊 Orders
 </h2>
 
-<section className="menu-grid">
+<section className="admin-stats-grid">
 
           {/* TOTAL ORDERS */}
 
@@ -1798,7 +1807,7 @@ if (screen === "admin") {
         <div className="nav-right">
 
           <button
-  className="nav-button"
+  className={`nav-button ${screen === "admin-dashboard" ? "active" : ""}`}
   onClick={() => {
     setError("");
     setSuccess("");
@@ -1809,20 +1818,20 @@ if (screen === "admin") {
   📊 Dashboard
 </button>
   <button
-    className="nav-button"
+    className={`nav-button ${screen === "admin" ? "active" : ""}`}
     onClick={() => setScreen("admin")}
   >
     📦 Orders
   </button>
 
   <button
-  className="nav-button"
+ className={`nav-button ${screen === "admin-subscriptions" ? "active" : ""}`}
   onClick={() => setScreen("admin-subscriptions")}
 >
   ⭐ Subscriptions
 </button>
   <button
-  className="nav-button"
+  className={`nav-button ${screen === "admin-menu" ? "active" : ""}`}
   onClick={() => {
     setError("");
     setSuccess("");
@@ -1833,7 +1842,7 @@ if (screen === "admin") {
   🍱 Menu
 </button>
   <button
-    className="nav-button"
+    className={`nav-button ${screen === "dashboard" ? "active" : ""}`}
     onClick={() => setScreen("dashboard")}
   >
     🏠 Customer View
@@ -2198,7 +2207,7 @@ if (screen === "admin-subscriptions") {
             </p>
           </div>
         ) : (
-          <div className="orders-list">
+         <div className="subscription-admin-list">
             {adminSubscriptions.map((subscription) => (
               <div
                 className="order-card"
@@ -2455,7 +2464,10 @@ if (screen === "admin-menu") {
             ADD / EDIT MENU FORM
         ===================================== */}
 
-        <section className="cart-section">
+        <section
+  id="admin-menu-edit-form"
+  className="cart-section"
+>
           <div className="section-heading">
             <div>
               <h2>
@@ -2534,6 +2546,19 @@ if (screen === "admin-menu") {
                 })
               }
             />
+            {menuForm.image && (
+  <img
+  src={menuForm.image}
+  alt="Menu preview"
+  className="menu-image-preview"
+  onError={(event) => {
+    event.currentTarget.style.display = "none";
+  }}
+  onLoad={(event) => {
+    event.currentTarget.style.display = "block";
+  }}
+/>
+)}
 
             <label
               style={{
@@ -2626,7 +2651,7 @@ if (screen === "admin-menu") {
               </p>
             </div>
           ) : (
-            <div className="menu-grid">
+           <div className="menu-grid admin-menu-grid">
               {adminMenuItems.map((item) => (
                 <div
                   className="menu-card"
@@ -3641,9 +3666,20 @@ setSuccess(
   📦 My Orders
 </button>
 
-  <span className="cart-indicator">
-    🛒 {cartCount}
-  </span>
+  <button
+  type="button"
+  className="cart-indicator"
+  onClick={() => {
+    document
+      .getElementById("checkout-section")
+      ?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+  }}
+>
+  🛒 {cartCount}
+</button>
 
   <button
     className="logout-btn"
@@ -3745,7 +3781,7 @@ setSuccess(
         </section>
 
         {cart.length > 0 && (
-          <section className="cart-section">
+          <section id="checkout-section" className="cart-section">
             <div className="section-heading">
               <div>
                 <h2>Your Cart</h2>
