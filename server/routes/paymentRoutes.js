@@ -531,6 +531,116 @@ console.log(
   }
 });
 // =====================================
+// CREATE COD ORDER
+// POST /api/payments/create-cod-order
+// =====================================
+
+router.post("/create-cod-order", protect, async (req, res) => {
+  console.log("COD ORDER ROUTE REACHED");
+
+  try {
+    const { items, deliveryAddress, phone } = req.body;
+
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({
+        message: "Your cart is empty",
+      });
+    }
+
+    if (!deliveryAddress || !deliveryAddress.trim()) {
+      return res.status(400).json({
+        message: "Delivery address is required",
+      });
+    }
+
+    // Get actual available menu items
+    const menuItemIds = items.map((item) => item.menuItem);
+
+    const menuItems = await MenuItem.find({
+      _id: { $in: menuItemIds },
+      available: true,
+    });
+
+    if (menuItems.length !== items.length) {
+      return res.status(400).json({
+        message: "One or more menu items are unavailable",
+      });
+    }
+
+    const menuMap = new Map(
+      menuItems.map((item) => [
+        item._id.toString(),
+        item,
+      ])
+    );
+
+    let calculatedTotal = 0;
+
+    const validatedItems = items.map((item) => {
+      const menuItem = menuMap.get(
+        item.menuItem.toString()
+      );
+
+      if (!menuItem) {
+        throw new Error("Invalid menu item");
+      }
+
+      const quantity = Number(item.quantity);
+
+      if (!Number.isInteger(quantity) || quantity < 1) {
+        throw new Error("Invalid item quantity");
+      }
+
+      calculatedTotal += menuItem.price * quantity;
+
+      return {
+        menuItem: menuItem._id,
+        name: menuItem.name,
+        price: menuItem.price,
+        quantity,
+      };
+    });
+
+    const order = await Order.create({
+      user: req.user.userId,
+
+      items: validatedItems,
+
+      totalAmount: Number(
+        calculatedTotal.toFixed(2)
+      ),
+
+      paymentMethod: "COD",
+      paymentStatus: "Pending",
+
+      deliveryAddress: deliveryAddress.trim(),
+      phone: phone || "",
+
+      status: "Placed",
+    });
+
+    console.log(
+      "COD order created successfully:",
+      order._id
+    );
+
+    return res.status(201).json({
+      message: "Order placed successfully with Cash on Delivery",
+      order,
+    });
+
+  } catch (error) {
+    console.error(
+      "Create COD order error:",
+      error
+    );
+
+    return res.status(500).json({
+      message: "Could not place COD order",
+    });
+  }
+});
+// =====================================
 // VERIFY SUBSCRIPTION PAYMENT
 // POST /api/payments/verify-subscription
 // =====================================

@@ -30,10 +30,10 @@ function getFallbackImage(category = "", name = "") {
 function Navbar({ isAdmin, isAdminUser, screen, onNav, onLogout, cartCount }) {
   if (isAdmin) {
     return (
-      <header className="navbar">
+      <header className="navbar admin-navbar">
         <div className="brand">
           <span>🍱</span>
-          <strong>TiffinGo</strong>
+          <strong>Eat It</strong>
         </div>
         <div className="nav-right">
           <button className={`nav-button ${screen === "admin-dashboard" ? "active" : ""}`}
@@ -55,7 +55,7 @@ function Navbar({ isAdmin, isAdminUser, screen, onNav, onLogout, cartCount }) {
     <header className="navbar">
       <div className="brand">
         <span>🍱</span>
-        <strong>TiffinGo</strong>
+        <strong>Eat It</strong>
       </div>
       <div className="nav-right">
         {isAdminUser && (
@@ -199,6 +199,7 @@ function App() {
   const [menuItems,       setMenuItems]       = useState([]);
   const [cart,            setCart]            = useState([]);
   const [deliveryAddress, setDeliveryAddress] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("Razorpay");
   const [activeCategory,  setActiveCategory]  = useState("All");
 
   const [menuForm, setMenuForm] = useState({
@@ -467,7 +468,31 @@ function App() {
         setError(`${unavailable.map((i) => i.name).join(", ")} is no longer available.`);
         return;
       }
+      if (paymentMethod === "COD") {
+  const codResponse = await fetch(`${API_URL}/api/payments/create-cod-order`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      items: orderItems,
+      deliveryAddress: deliveryAddress.trim(),
+      phone: user?.phone || "",
+    }),
+  });
 
+  const codData = await codResponse.json();
+
+  if (!codResponse.ok) {
+    throw new Error(codData.message || "Could not place COD order");
+  }
+
+  setSuccess(`Order placed! Order ID: ${codData.order._id}`);
+  setCart([]);
+  setDeliveryAddress("");
+  return;
+}
       // create order
       const r = await fetch(`${API_URL}/api/payments/create-order`, {
         method: "POST",
@@ -481,8 +506,8 @@ function App() {
         key: d.keyId,
         amount: d.order.amount,
         currency: d.order.currency,
-        name: "TiffinGo",
-        description: "TiffinGo Food Order",
+        name: "Eat It",
+        description: "Eat It Food Order",
         order_id: d.order.id,
         handler: async (paymentResponse) => {
           try {
@@ -530,7 +555,7 @@ function App() {
 
       const options = {
         key: d.keyId, amount: d.order.amount, currency: d.order.currency,
-        name: "TiffinGo", description: `TiffinGo ${plan} Subscription`, order_id: d.order.id,
+        name: "Eat It", description: `Eat It ${plan} Subscription`, order_id: d.order.id,
         handler: async (pr) => {
           try {
             setSuccess("Verifying subscription…");
@@ -604,7 +629,7 @@ function App() {
     return (
       <div className="app">
         <div className="loading-card">
-          <h1>🍱 TiffinGo</h1>
+          <h1>🍱 Eat It</h1>
           <p>Checking your session…</p>
         </div>
       </div>
@@ -616,7 +641,7 @@ function App() {
     return (
       <div className="app auth-page">
         <div className="auth-card">
-          <h1>TiffinGo</h1>
+          <h1>Eat It</h1>
           <p className="auth-subtitle">Login to continue</p>
           {error && <div className="error">{error}</div>}
           <form onSubmit={login}>
@@ -640,7 +665,7 @@ function App() {
     return (
       <div className="app auth-page">
         <div className="auth-card">
-          <h1>TiffinGo</h1>
+          <h1>Eat It</h1>
           <p className="auth-subtitle">Create your account</p>
           {error && <div className="error">{error}</div>}
           <form onSubmit={register}>
@@ -670,7 +695,7 @@ function App() {
           <section className="welcome">
             <p className="small-text">Administrator</p>
             <h1>Dashboard Overview</h1>
-            <p>Here's a live snapshot of your TiffinGo business.</p>
+            <p>Here's a live snapshot of your Eat It business.</p>
             <div className="hero-stats">
               <div className="hero-stat">
                 <strong>₹{Number(adminStats.totalRevenue).toFixed(0)}</strong>
@@ -715,7 +740,7 @@ function App() {
             <div className="section-heading">
               <div>
                 <h2>Quick Actions</h2>
-                <p>Jump to any section of your TiffinGo system.</p>
+                <p>Jump to any section of your Eat It system.</p>
               </div>
             </div>
             <div style={{ display:"flex", flexWrap:"wrap", gap:"12px" }}>
@@ -836,7 +861,7 @@ function App() {
           <section className="welcome">
             <p className="small-text">Administrator</p>
             <h1>Subscription Management</h1>
-            <p>View all active and cancelled TiffinGo subscriptions.</p>
+            <p>View all active and cancelled Eat It subscriptions.</p>
           </section>
 
           {error   && <div className="error">{error}</div>}
@@ -1021,7 +1046,7 @@ function App() {
           <section className="welcome">
             <p className="small-text">Order History</p>
             <h1>My Orders</h1>
-            <p>Track your current and past TiffinGo deliveries.</p>
+            <p>Track your current and past Eat It deliveries.</p>
           </section>
 
           {error   && <div className="error">{error}</div>}
@@ -1121,7 +1146,7 @@ function App() {
 />
         <main className="dashboard">
           <section className="welcome">
-            <p className="small-text">TiffinGo Plans</p>
+            <p className="small-text">Eat It Plans</p>
             <h1>Subscription</h1>
             <p>Get daily meals delivered without ordering every day.</p>
           </section>
@@ -1161,7 +1186,7 @@ function App() {
               <div className="plan-card">
                 <div className="plan-icon">🍱</div>
                 <h2>Weekly</h2>
-                <p className="plan-description">Perfect for trying TiffinGo for one week.</p>
+                <p className="plan-description">Perfect for trying Eat It for one week.</p>
                 <div className="plan-price">₹700<span>/week</span></div>
                 <ul>
                   <li>✓ Daily tiffin delivery</li>
@@ -1382,11 +1407,47 @@ function App() {
             </div>
 
             {/* PAY */}
-            <div className="checkout-area">
-              <button className="checkout-button" onClick={startPayment}>
-                Pay ₹{cartTotal.toFixed(2)} via Razorpay
-              </button>
-            </div>
+<div className="checkout-area">
+  <h3>Payment Method</h3>
+
+  <div className="payment-options">
+
+  <label className={`payment-option ${paymentMethod === "Razorpay" ? "selected" : ""}`}>
+    <input
+      type="radio"
+      value="Razorpay"
+      checked={paymentMethod === "Razorpay"}
+      onChange={(e) => setPaymentMethod(e.target.value)}
+    />
+
+    <div className="payment-option-content">
+      <strong>💳 Pay Online</strong>
+      <span>Secure payment via Razorpay</span>
+    </div>
+  </label>
+
+  <label className={`payment-option ${paymentMethod === "COD" ? "selected" : ""}`}>
+    <input
+      type="radio"
+      value="COD"
+      checked={paymentMethod === "COD"}
+      onChange={(e) => setPaymentMethod(e.target.value)}
+    />
+
+    <div className="payment-option-content">
+      <strong>💵 Pay on Delivery</strong>
+      <span>Pay with cash when your order arrives</span>
+    </div>
+  </label>
+
+</div>
+
+  <button className="checkout-button" onClick={startPayment}>
+    {paymentMethod === "COD"
+      ? `Place COD Order ₹${cartTotal.toFixed(2)}`
+      : `Pay ₹${cartTotal.toFixed(2)} via Razorpay`}
+  </button>
+</div>
           </section>
         )}
 

@@ -67,6 +67,11 @@ paymentStatus: {
   enum: ["Pending", "Paid", "Failed"],
   default: "Pending",
 },
+paymentMethod: {
+  type: String,
+  enum: ["Razorpay", "COD"],
+  default: "Razorpay",
+},
 
     deliveryAddress: {
       type: String,

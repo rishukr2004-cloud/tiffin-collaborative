@@ -337,7 +337,7 @@ img { display:block; max-width:100%; }
 }
 
 /* Admin badge */
-.navbar .brand strong::after {
+.navbar.admin-navbar .brand strong::after {
   content:'ADMIN';
   display:inline-flex; align-items:center;
   margin-left:8px; padding:3px 7px;
@@ -1300,4 +1300,54 @@ img { display:block; max-width:100%; }
 
 @media (prefers-reduced-motion:reduce) {
   *,*::before,*::after { animation-duration:.01ms !important; transition-duration:.01ms !important; }
+}
+
+/* Payment method selector */
+.payment-options {
+  display: grid;
+  gap: 12px;
+  margin: 14px 0 18px;
+}
+
+.payment-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  background: var(--card);
+}
+
+.payment-option:hover {
+  transform: translateY(-1px);
+}
+
+.payment-option.selected {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.12);
+}
+
+.payment-option input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  accent-color: var(--orange);
+}
+
+.payment-option-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.payment-option-content strong {
+  font-size: 15px;
+}
+
+.payment-option-content span {
+  font-size: 13px;
+  opacity: 0.7;
 }
