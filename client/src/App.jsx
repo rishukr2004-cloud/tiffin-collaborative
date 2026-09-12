@@ -41,6 +41,7 @@ function Navbar({ isAdmin, isAdminUser, screen, onNav, onLogout, cartCount }) {
           <button className={`nav-button ${screen === "admin" ? "active" : ""}`}
             onClick={() => onNav("admin")}>📦 Orders</button>
           <button className={`nav-button ${screen === "admin-subscriptions" ? "active" : ""}`}
+
             onClick={() => onNav("admin-subscriptions")}>⭐ Subscriptions</button>
           <button className={`nav-button ${screen === "admin-menu" ? "active" : ""}`}
             onClick={() => onNav("admin-menu")}>🍱 Menu</button>
@@ -74,6 +75,8 @@ function Navbar({ isAdmin, isAdminUser, screen, onNav, onLogout, cartCount }) {
 </button>
         <button className={`nav-button ${screen === "orders" ? "active" : ""}`}
           onClick={() => onNav("orders")}>📦 My Orders</button>
+          <button className={`nav-button ${screen === "favorites" ? "active" : ""}`}
+          onClick={() => onNav("favorites")}>❤️ Favorites</button>
         <button className={`nav-button ${screen === "subscription" ? "active" : ""}`}
           onClick={() => onNav("subscription")}>⭐ Subscription</button>
         <button
@@ -123,28 +126,152 @@ function MobileBottomNav({ screen, onNav, isAdminUser }) {
 }
 
 // ── MENU CARD ─────────────────────────────────────────────────
-function MenuCard({ item, onAdd, badge }) {
+function MenuCard({
+  item,
+  onAdd,
+  badge,
+  isFavorite,
+  onToggleFavorite,
+  reviews,
+  onLoadReviews,
+  onSubmitReview,
+}) {
   const [imgSrc, setImgSrc] = useState(
     item.image || getFallbackImage(item.category, item.name)
   );
+  const [showReviews, setShowReviews] = useState(false);
+  const [rating, setRating] = useState(5);
+  const [comment, setComment] = useState("");
+  
+
+  const averageRating =
+    reviews.length > 0
+      ? (
+          reviews.reduce((sum, review) => sum + Number(review.rating), 0) /
+          reviews.length
+        ).toFixed(1)
+      : null;
+
+  const handleReviewsClick = () => {
+    const nextState = !showReviews;
+    setShowReviews(nextState);
+
+    if (nextState && reviews.length === 0) {
+      onLoadReviews(item._id);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!comment.trim()) return;
+
+    await onSubmitReview(item._id, rating, comment.trim());
+
+    setComment("");
+    setRating(5);
+  };
 
   return (
-    <div className={`menu-card ${badge === "popular" ? "is-popular" : ""} ${badge === "new" ? "is-new" : ""}`}>
+    <div
+      className={`menu-card ${
+        badge === "popular" ? "is-popular" : ""
+      } ${badge === "new" ? "is-new" : ""}`}
+    >
       <img
         src={imgSrc}
         alt={item.name}
         className="menu-image"
-        onError={() => setImgSrc(getFallbackImage(item.category, item.name))}
+        onError={() =>
+          setImgSrc(getFallbackImage(item.category, item.name))
+        }
       />
+
       <div className="menu-content">
         <p className="menu-category">{item.category}</p>
+
         <h3>{item.name}</h3>
+
         <p className="menu-description">{item.description}</p>
+
+        <div className="review-summary">
+          <button
+            type="button"
+            className="reviews-toggle"
+            onClick={handleReviewsClick}
+          >
+            ⭐ {averageRating || "No rating"}
+            {reviews.length > 0 && ` (${reviews.length})`}
+          </button>
+        </div>
+
+        {showReviews && (
+          <div className="reviews-box">
+            {reviews.length === 0 ? (
+              <p className="no-reviews">No reviews yet. Be the first!</p>
+            ) : (
+              <div className="reviews-list">
+                {reviews.map((review) => (
+                  <div className="review-item" key={review._id}>
+                    <div className="review-header">
+                      <strong>{review.user?.name || "Customer"}</strong>
+                      <span>{"⭐".repeat(Number(review.rating))}</span>
+                    </div>
+
+                    {review.comment && <p>{review.comment}</p>}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <form className="review-form" onSubmit={handleSubmit}>
+              <label>
+                Your rating
+                <select
+                  value={rating}
+                  onChange={(e) => setRating(Number(e.target.value))}
+                >
+                  <option value="5">⭐⭐⭐⭐⭐ 5</option>
+                  <option value="4">⭐⭐⭐⭐ 4</option>
+                  <option value="3">⭐⭐⭐ 3</option>
+                  <option value="2">⭐⭐ 2</option>
+                  <option value="1">⭐ 1</option>
+                </select>
+              </label>
+
+              <textarea
+                placeholder="Write a review..."
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                maxLength={500}
+                rows={3}
+              />
+
+              <button type="submit">Submit Review</button>
+            </form>
+          </div>
+        )}
+
         <div className="menu-bottom">
           <strong>₹{Number(item.price).toFixed(2)}</strong>
-          {onAdd && (
-            <button onClick={() => onAdd(item)}>+ Add</button>
-          )}
+
+          <div className="menu-actions">
+            <button
+              className={`favorite-btn ${isFavorite ? "active" : ""}`}
+              onClick={() => onToggleFavorite(item)}
+              aria-label={
+                isFavorite
+                  ? "Remove from favorites"
+                  : "Add to favorites"
+              }
+            >
+              {isFavorite ? "❤️" : "♡"}
+            </button>
+
+            {onAdd && (
+              <button onClick={() => onAdd(item)}>+ Add</button>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -198,9 +325,13 @@ function App() {
 
   const [menuItems,       setMenuItems]       = useState([]);
   const [cart,            setCart]            = useState([]);
+  const [favorites, setFavorites] = useState([]);
+  const [reviews, setReviews] = useState({});
   const [deliveryAddress, setDeliveryAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("Razorpay");
   const [activeCategory,  setActiveCategory]  = useState("All");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
 
   const [menuForm, setMenuForm] = useState({
     name: "", description: "", price: "", category: "", image: "", available: true,
@@ -235,6 +366,32 @@ function App() {
       .catch((err) => { console.error(err); setError("Could not load menu."); });
   }, [screen]);
 
+  // ── load favorites on dashboard ──
+useEffect(() => {
+  if (screen !== "dashboard") return;
+  const token = localStorage.getItem("token");
+  if (!token) return;
+
+  fetch(`${API_URL}/api/favorites`, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+    .then(async (r) => {
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.message);
+      return d;
+    })
+    .then((d) => setFavorites(d || []))
+    .catch((err) => console.error("Could not load favorites:", err));
+}, [screen]);
+// ── load reviews on dashboard ──
+useEffect(() => {
+  if (screen !== "dashboard") return;
+
+  menuItems.forEach((item) => {
+    loadReviews(item._id);
+  });
+}, [screen, menuItems]);
+
   // ── screen-driven loads ──
   useEffect(() => {
     if (screen === "admin-dashboard" && user?.role === "admin") loadAdminStats();
@@ -252,6 +409,7 @@ function App() {
     if (target === "admin-menu")         { loadAdminMenu();          }
     if (target === "orders")             { loadOrders();             }
     if (target === "subscription")       { loadSubscription(); loadSubscriptionHistory(); }
+    if (target === "favorites") { setScreen("favorites"); }
     setScreen(target);
   };
 
@@ -306,6 +464,95 @@ function App() {
 
   const increaseQuantity = (id) =>
     setCart((c) => c.map((i) => i._id === id ? { ...i, quantity: i.quantity + 1 } : i));
+
+  const toggleFavorite = async (item) => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    setError("Please login to manage favorites.");
+    return;
+  }
+
+  const isFavorite = favorites.some((fav) => fav._id === item._id);
+
+  try {
+    const r = await fetch(
+      `${API_URL}/api/favorites/${item._id}`,
+      {
+        method: isFavorite ? "DELETE" : "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const d = await r.json();
+
+    if (!r.ok) {
+      throw new Error(d.message || "Failed to update favorite");
+    }
+
+    if (isFavorite) {
+      setFavorites((prev) =>
+        prev.filter((fav) => fav._id !== item._id)
+      );
+    } else {
+      setFavorites((prev) => [...prev, item]);
+    }
+  } catch (err) {
+    setError(err.message);
+  }
+};
+const loadReviews = async (menuItemId) => {
+  try {
+    const r = await fetch(`${API_URL}/api/reviews/${menuItemId}`);
+    const d = await r.json();
+
+    if (!r.ok) {
+      throw new Error(d.message || "Failed to load reviews");
+    }
+
+    setReviews((prev) => ({
+      ...prev,
+      [menuItemId]: d || [],
+    }));
+  } catch (err) {
+    console.error("Could not load reviews:", err);
+  }
+};
+const submitReview = async (menuItemId, rating, comment) => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    setError("Please login to leave a review.");
+    return;
+  }
+
+  try {
+    const r = await fetch(`${API_URL}/api/reviews/${menuItemId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ rating, comment }),
+    });
+
+    const d = await r.json();
+
+    if (!r.ok) {
+      throw new Error(d.message || "Failed to submit review");
+    }
+
+    setReviews((prev) => ({
+      ...prev,
+      [menuItemId]: [d, ...(prev[menuItemId] || [])],
+    }));
+
+    setSuccess("Review submitted successfully.");
+  } catch (err) {
+    setError(err.message);
+  }
+};
 
   const cartCount = cart.reduce((t, i) => t + i.quantity, 0);
   const cartTotal = cart.reduce((t, i) => t + i.price * i.quantity, 0);
@@ -616,10 +863,20 @@ function App() {
 
   // ── derived: category list ──
   const categories = ["All", ...Array.from(new Set(menuItems.map((i) => i.category).filter(Boolean)))];
-  const filteredMenu = activeCategory === "All"
-    ? menuItems
-    : menuItems.filter((i) => i.category === activeCategory);
 
+const filteredMenu = menuItems.filter((item) => {
+  const matchesCategory =
+    activeCategory === "All" || item.category === activeCategory;
+
+  const matchesSearch =
+    item.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.category?.toLowerCase().includes(searchTerm.toLowerCase());
+
+  const matchesPrice =
+    maxPrice === "" || Number(item.price) <= Number(maxPrice);
+
+  return matchesCategory && matchesSearch && matchesPrice;
+});
   // ═════════════════════════════════════════════════════════════
   // SCREENS
   // ═════════════════════════════════════════════════════════════
@@ -1266,6 +1523,60 @@ function App() {
       </div>
     );
   }
+  // ── favorites ──
+if (screen === "favorites") {
+  return (
+    <div className="app">
+      <Navbar
+        screen={screen}
+        onNav={goTo}
+        onLogout={logout}
+        cartCount={cartCount}
+        isAdminUser={user?.role === "admin"}
+      />
+
+      <main className="dashboard">
+        <section className="welcome">
+          <p className="small-text">Eat It</p>
+          <h1>❤️ My Favorites</h1>
+          <p>Meals you've saved for later.</p>
+        </section>
+
+        {favorites.length === 0 ? (
+          <div className="empty-card">
+            <div style={{ fontSize: 50 }}>♡</div>
+            <h2>No favorites yet</h2>
+            <p>Add meals to your favorites and they will appear here.</p>
+          </div>
+        ) : (
+          <section className="menu-section">
+            <div className="menu-grid">
+              {favorites.map((item, idx) => (
+                <MenuCard
+  key={item._id}
+  item={item}
+  onAdd={addToCart}
+ badge={idx === 0 ? "popular" : idx === favorites.length - 1 ? "new" : null}
+  isFavorite={favorites.some((fav) => fav._id === item._id)}
+  onToggleFavorite={toggleFavorite}
+  reviews={reviews[item._id] || []}
+  onLoadReviews={loadReviews}
+  onSubmitReview={submitReview}
+/>
+              ))}
+            </div>
+          </section>
+        )}
+      </main>
+
+      <MobileBottomNav
+        screen={screen}
+        onNav={goTo}
+        isAdminUser={user?.role === "admin"}
+      />
+    </div>
+  );
+}
 
   // ── customer dashboard (default) ──────────────────────────────
   return (
@@ -1313,7 +1624,24 @@ function App() {
             </div>
             <div className="cart-total">Cart: ₹{cartTotal.toFixed(2)}</div>
           </div>
-
+          {/* SEARCH */}
+<div className="menu-search">
+  <input
+    type="text"
+    placeholder="🔎 Search meals..."
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+  />
+</div>
+<div className="price-filter">
+  <input
+    type="number"
+    min="0"
+    placeholder="Max price ₹"
+    value={maxPrice}
+    onChange={(e) => setMaxPrice(e.target.value)}
+  />
+</div>
           {/* CATEGORY FILTER */}
           {categories.length > 1 && (
             <div className="filter-bar">
@@ -1335,11 +1663,16 @@ function App() {
             <div className="menu-grid">
               {filteredMenu.map((item, idx) => (
                 <MenuCard
-                  key={item._id}
-                  item={item}
-                  onAdd={addToCart}
-                  badge={idx === 0 ? "popular" : idx === filteredMenu.length - 1 ? "new" : null}
-                />
+  key={item._id}
+  item={item}
+  onAdd={addToCart}
+  badge={idx === 0 ? "popular" : idx === filteredMenu.length - 1 ? "new" : null}
+  isFavorite={favorites.some((fav) => fav._id === item._id)}
+  onToggleFavorite={toggleFavorite}
+  reviews={reviews[item._id] || []}
+  onLoadReviews={loadReviews}
+  onSubmitReview={submitReview}
+/>
               ))}
             </div>
           )}

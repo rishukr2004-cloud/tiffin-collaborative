@@ -15,6 +15,12 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
+    favorites: [
+  {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "MenuItem",
+  },
+],
 
     phone: {
       type: String,

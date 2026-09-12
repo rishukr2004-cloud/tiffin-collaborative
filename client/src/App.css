@@ -1351,3 +1351,149 @@ img { display:block; max-width:100%; }
   font-size: 13px;
   opacity: 0.7;
 }
+
+/* Search & Filter */
+/* Search & Filter */
+.menu-search,
+.price-filter {
+  margin: 0;
+}
+
+.menu-search input,
+.price-filter input {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1px solid #e2e2e2;
+  border-radius: 12px;
+  background: #fff;
+  color: #222;
+  font-size: 15px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.menu-search input {
+  max-width: 520px;
+}
+
+.price-filter input {
+  max-width: 220px;
+}
+
+.menu-search input::placeholder,
+.price-filter input::placeholder {
+  color: #999;
+}
+
+.menu-search input:focus,
+.price-filter input:focus {
+  border-color: #ff7a00;
+  box-shadow: 0 0 0 4px rgba(255, 122, 0, 0.1);
+}
+
+.menu-search input:hover,
+.price-filter input:hover {
+  border-color: #cfcfcf;
+}
+/* Ratings & Reviews */
+.review-summary {
+  margin: 10px 0;
+}
+
+.reviews-toggle {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  font-size: 14px;
+  color: #555;
+}
+
+.reviews-toggle:hover {
+  color: #ff7a00;
+}
+
+.reviews-box {
+  margin: 12px 0 16px;
+  padding: 12px;
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 12px;
+}
+
+.no-reviews {
+  margin: 0 0 12px;
+  color: #777;
+  font-size: 14px;
+}
+
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.review-item {
+  padding: 10px;
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #eee;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.review-item p {
+  margin: 4px 0 0;
+  color: #555;
+  font-size: 14px;
+}
+
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.review-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.review-form select,
+.review-form textarea {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.review-form textarea {
+  resize: vertical;
+}
+
+.review-form button {
+  align-self: flex-start;
+  border: none;
+  background: #ff7a00;
+  color: white;
+  padding: 9px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.review-form button:hover {
+  opacity: 0.9;
+}

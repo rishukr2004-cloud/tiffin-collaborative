@@ -5,6 +5,8 @@ require("dotenv").config({ path: "./.env" });
 
 const authRoutes = require("./routes/authRoutes");
 const menuRoutes = require("./routes/menuRoutes");
+const favoritesRoutes = require("./routes/favoritesRoutes");
+const reviewsRoutes = require("./routes/reviewsRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const subscriptionRoutes = require("./routes/subscriptionRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
@@ -24,6 +26,8 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/menu", menuRoutes);
+app.use("/api/favorites", favoritesRoutes);
+app.use("/api/reviews", reviewsRoutes);
 app.use("/api/orders", orderRoutes);
 app.use(
   "/api/subscriptions",
