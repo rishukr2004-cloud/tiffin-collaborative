@@ -78,6 +78,15 @@ paymentMethod: {
       default: "",
       trim: true,
     },
+    deliveryDate: {
+  type: Date,
+  default: null,
+},
+
+deliveryWindow: {
+  type: String,
+  default: "1:00 PM - 2:00 PM",
+},
 
     phone: {
       type: String,

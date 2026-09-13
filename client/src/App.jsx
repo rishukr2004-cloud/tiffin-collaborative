@@ -332,6 +332,16 @@ function App() {
   const [reviews, setReviews] = useState({});
   const [deliveryAddress, setDeliveryAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("Razorpay");
+  const getDeliveryDate = () => {
+  const now = new Date();
+  const deliveryDate = new Date(now);
+
+  if (now.getHours() >= 11) {
+    deliveryDate.setDate(deliveryDate.getDate() + 1);
+  }
+
+  return deliveryDate;
+};
   const [activeCategory,  setActiveCategory]  = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
@@ -1789,7 +1799,14 @@ if (screen === "favorites") {
   </label>
 
 </div>
-
+<div className="delivery-info">
+  <strong>🍱 Lunch Delivery</strong>
+  <span>
+    Delivery date: {getDeliveryDate().toLocaleDateString()}
+  </span>
+  <span>Delivery time: 1:00 PM - 2:00 PM</span>
+  <span>Order before 11:00 AM for today's lunch delivery.</span>
+</div>
   <button className="checkout-button" onClick={startPayment}>
     {paymentMethod === "COD"
       ? `Place COD Order ₹${cartTotal.toFixed(2)}`
