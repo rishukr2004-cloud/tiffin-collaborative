@@ -609,7 +609,14 @@ router.post("/create-cod-order", protect, async (req, res) => {
         quantity,
       };
     });
+     const now = new Date();
 
+const deliveryDate = new Date(now);
+deliveryDate.setHours(13, 0, 0, 0);
+
+if (now.getHours() >= 11) {
+  deliveryDate.setDate(deliveryDate.getDate() + 1);
+}
     const order = await Order.create({
       user: req.user.userId,
 
