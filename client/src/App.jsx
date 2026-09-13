@@ -1636,6 +1636,7 @@ if (screen === "favorites") {
     onChange={(e) => setSearchTerm(e.target.value)}
   />
 </div>
+<label className="price-filter-label">Max Price</label>
 <div className="price-filter">
   <input
     type="number"
