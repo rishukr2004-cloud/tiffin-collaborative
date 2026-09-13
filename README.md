@@ -1,36 +1,105 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🍱 Eat It — Food Ordering & Lunch Delivery Platform
 
-## Getting Started
+A full-stack food ordering web application built for customers, hostel/PG residents, and office users.
 
-First, run the development server:
+Eat It allows customers to browse meals, search and filter the menu, save favorites, place orders, make payments, subscribe to meal plans, and leave ratings and reviews.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+The platform also includes an admin dashboard for managing the food ordering system.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Live Demo
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Frontend: https://tiffin-collaborative-live.vercel.app
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Backend API: https://tiffin-collaborative.onrender.com
 
-## Learn More
+## ✨ Features
 
-To learn more about Next.js, take a look at the following resources:
+### 👤 Customer Features
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- User registration and login
+- Browse available meals
+- Search meals by name or category
+- Filter meals by category
+- Filter meals by maximum price
+- Clear search and filter selections
+- Add meals to cart
+- Place food orders
+- Track order status
+- Razorpay online payments
+- Cash on Delivery
+- Meal subscriptions
+- Save meals to Favorites
+- View and manage favorite meals
+- Rate meals from 1–5 stars
+- Write meal reviews
+- View ratings and reviews from other customers
+- Lunch delivery scheduling
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 🍱 Lunch Delivery
 
-## Deploy on Vercel
+The platform supports scheduled lunch delivery:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Delivery window: **1:00 PM – 2:00 PM**
+- Orders placed before **11:00 AM** are scheduled for the same day's lunch
+- Orders placed at or after **11:00 AM** are scheduled for the next day's lunch
+- Delivery scheduling is enforced by the backend
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 🛠️ Admin Features
+
+- Admin authentication
+- Admin dashboard
+- Menu management
+- Order management
+- Customer/order monitoring
+- Order status management
+- Administrative access controls
+
+## 🧑‍💻 Tech Stack
+
+### Frontend
+
+- React
+- Vite
+- JavaScript
+- CSS
+
+### Backend
+
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+- JWT Authentication
+- bcrypt
+
+### Payments
+
+- Razorpay
+- Cash on Delivery
+
+### Deployment
+
+- Vercel — Frontend
+- Render — Backend
+- MongoDB Atlas — Database
+
+## 📂 Project Structure
+
+```text
+tiffin-collaborative/
+│
+├── client/
+│   ├── src/
+│   │   ├── App.jsx
+│   │   └── App.css
+│   └── package.json
+│
+├── server/
+│   ├── models/
+│   ├── routes/
+│   ├── middleware/
+│   ├── utils/
+│   ├── server.js
+│   └── package.json
+│
+└── README.md
