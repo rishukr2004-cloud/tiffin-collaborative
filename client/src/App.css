@@ -1004,5 +1004,20 @@ label { font-size:13px; font-weight:700; color:var(--charcoal); }
     scroll-behavior:auto !important;
   }
 }
+.clear-filters-btn {
+  border: none;
+  background: #f3f0eb;
+  color: #7a4b22;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 8px 0 16px;
+  transition: all 0.2s ease;
+}
 
-
+.clear-filters-btn:hover {
+  background: #e8dfd3;
+  transform: translateY(-1px);
+}
