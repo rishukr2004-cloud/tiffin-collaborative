@@ -630,7 +630,8 @@ if (now.getHours() >= 11) {
       paymentStatus: "Pending",
 
       deliveryAddress: deliveryAddress.trim(),
-      phone: phone || "",
+phone: phone || "",
+deliveryDate,
 
       status: "Placed",
     });
