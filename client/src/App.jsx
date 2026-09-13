@@ -1789,7 +1789,11 @@ if (screen === "favorites") {
   </label>
 
 </div>
-
+<div className="delivery-info">
+  <strong>🍱 Lunch Delivery</strong>
+  <span>Delivery time: 1:00 PM - 2:00 PM</span>
+  <span>Order before 11:00 AM for today's lunch delivery.</span>
+</div>
   <button className="checkout-button" onClick={startPayment}>
     {paymentMethod === "COD"
       ? `Place COD Order ₹${cartTotal.toFixed(2)}`
