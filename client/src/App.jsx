@@ -246,6 +246,9 @@ function MenuCard({
                 maxLength={500}
                 rows={3}
               />
+              <div className="review-character-count">
+  {comment.length}/500
+</div>
 
               <button type="submit">Submit Review</button>
             </form>
