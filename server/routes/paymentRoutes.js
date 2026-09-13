@@ -480,6 +480,14 @@ if (razorpayOrder.amount !== expectedAmountInPaise) {
 console.log(
   "Razorpay amount verified successfully ✅"
 );
+    const now = new Date();
+
+const deliveryDate = new Date(now);
+deliveryDate.setHours(13, 0, 0, 0);
+
+if (now.getHours() >= 11) {
+  deliveryDate.setDate(deliveryDate.getDate() + 1);
+}
 
     // ---------------------------------
     // Create paid TiffinGo order
