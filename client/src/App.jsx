@@ -1801,6 +1801,9 @@ if (screen === "favorites") {
 </div>
 <div className="delivery-info">
   <strong>🍱 Lunch Delivery</strong>
+  <span>
+    Delivery date: {getDeliveryDate().toLocaleDateString()}
+  </span>
   <span>Delivery time: 1:00 PM - 2:00 PM</span>
   <span>Order before 11:00 AM for today's lunch delivery.</span>
 </div>
