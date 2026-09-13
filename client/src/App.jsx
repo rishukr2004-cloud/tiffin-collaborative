@@ -332,6 +332,16 @@ function App() {
   const [reviews, setReviews] = useState({});
   const [deliveryAddress, setDeliveryAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("Razorpay");
+  const getDeliveryDate = () => {
+  const now = new Date();
+  const deliveryDate = new Date(now);
+
+  if (now.getHours() >= 11) {
+    deliveryDate.setDate(deliveryDate.getDate() + 1);
+  }
+
+  return deliveryDate;
+};
   const [activeCategory,  setActiveCategory]  = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
