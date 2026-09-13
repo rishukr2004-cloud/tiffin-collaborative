@@ -1646,6 +1646,17 @@ if (screen === "favorites") {
     onChange={(e) => setMaxPrice(e.target.value)}
   />
 </div>
+          <button
+  type="button"
+  className="clear-filters-btn"
+  onClick={() => {
+    setSearchTerm("");
+    setMaxPrice("");
+    setActiveCategory("All");
+  }}
+>
+  Clear Filters
+</button>
           {/* CATEGORY FILTER */}
           {categories.length > 1 && (
             <div className="filter-bar">
