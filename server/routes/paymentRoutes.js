@@ -511,6 +511,7 @@ if (now.getHours() >= 11) {
       deliveryAddress: deliveryAddress || "",
 
       phone: phone || "",
+      deliveryDate,
 
       status: "Placed",
     });
