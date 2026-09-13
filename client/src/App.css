@@ -1021,3 +1021,21 @@ label { font-size:13px; font-weight:700; color:var(--charcoal); }
   background: #e8dfd3;
   transform: translateY(-1px);
 }
+.delivery-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 18px 0;
+  padding: 14px 18px;
+  border-radius: 14px;
+  background: #fff8e8;
+  text-align: center;
+}
+
+.delivery-info strong {
+  font-size: 17px;
+}
+
+.delivery-info span {
+  font-size: 14px;
+}

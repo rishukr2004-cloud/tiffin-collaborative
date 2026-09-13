@@ -334,9 +334,16 @@ function App() {
   const [paymentMethod, setPaymentMethod] = useState("Razorpay");
   const getDeliveryDate = () => {
   const now = new Date();
-  const deliveryDate = new Date(now);
 
-  if (now.getHours() >= 11) {
+  const indiaTime = new Date(
+    now.toLocaleString("en-US", {
+      timeZone: "Asia/Kolkata",
+    })
+  );
+
+  const deliveryDate = new Date(indiaTime);
+
+  if (indiaTime.getHours() >= 11) {
     deliveryDate.setDate(deliveryDate.getDate() + 1);
   }
 

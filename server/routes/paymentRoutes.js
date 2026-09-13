@@ -1,11 +1,21 @@
 const express = require("express");
+
 const crypto = require("crypto");
 
 const razorpay = require("../config/razorpay");
+
 const Order = require("../models/Order");
+
 const Subscription = require("../models/Subscription");
+
 const MenuItem = require("../models/MenuItem");
+
 const { protect } = require("../middleware/authMiddleware");
+
+const {
+  getNextLunchDeliveryDate,
+  getDeliveryWindow,
+} = require("../utils/delivery");
 
 const router = express.Router();
 
@@ -482,12 +492,8 @@ console.log(
 );
     const now = new Date();
 
-const deliveryDate = new Date(now);
-deliveryDate.setHours(13, 0, 0, 0);
-
-if (now.getHours() >= 11) {
-  deliveryDate.setDate(deliveryDate.getDate() + 1);
-}
+const deliveryDate = getNextLunchDeliveryDate();
+const deliveryWindow = getDeliveryWindow();
 
     // ---------------------------------
     // Create paid TiffinGo order
@@ -512,6 +518,7 @@ if (now.getHours() >= 11) {
 
       phone: phone || "",
       deliveryDate,
+      deliveryWindow,
 
       status: "Placed",
     });
@@ -611,12 +618,8 @@ router.post("/create-cod-order", protect, async (req, res) => {
     });
      const now = new Date();
 
-const deliveryDate = new Date(now);
-deliveryDate.setHours(13, 0, 0, 0);
-
-if (now.getHours() >= 11) {
-  deliveryDate.setDate(deliveryDate.getDate() + 1);
-}
+const deliveryDate = getNextLunchDeliveryDate();
+const deliveryWindow = getDeliveryWindow();
     const order = await Order.create({
       user: req.user.userId,
 
@@ -632,6 +635,7 @@ if (now.getHours() >= 11) {
       deliveryAddress: deliveryAddress.trim(),
 phone: phone || "",
 deliveryDate,
+deliveryWindow,
 
       status: "Placed",
     });
